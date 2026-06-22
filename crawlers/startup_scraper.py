@@ -1,7 +1,7 @@
 import requests
-import re
+from bs4 import BeautifulSoup
 
-def get_startups():
+def get_startups(limit=20):
 
     url = "https://www.ycombinator.com/companies"
 
@@ -12,14 +12,37 @@ def get_startups():
         }
     )
 
-    text = response.text
-
-    matches = re.findall(
-        r'/api/[A-Za-z0-9_\-/]+',
-        text
+    soup = BeautifulSoup(
+        response.text,
+        "html.parser"
     )
 
-    for match in sorted(set(matches)):
-        print(match)
+    startups = []
 
-    return []
+    text = soup.get_text()
+
+    words = text.split()
+
+    for word in words:
+
+        if len(word) > 3 and word[0].isupper():
+
+            startups.append({
+                "name": word,
+                "source": "Y Combinator",
+                "url": url
+            })
+
+    unique = []
+
+    seen = set()
+
+    for startup in startups:
+
+        if startup["name"] not in seen:
+
+            seen.add(startup["name"])
+
+            unique.append(startup)
+
+    return unique[:limit]
