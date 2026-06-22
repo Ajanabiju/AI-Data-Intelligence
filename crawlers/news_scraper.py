@@ -1,9 +1,9 @@
 import feedparser
 
-def get_ai_news():
+def get_news():
 
     feed = feedparser.parse(
-        "https://feeds.feedburner.com/oreilly/radar"
+        "https://techcrunch.com/category/artificial-intelligence/feed/"
     )
 
     news = []
@@ -12,11 +12,12 @@ def get_ai_news():
 
         news.append({
             "title": entry.title,
-            "published": entry.get(
+            "url": entry.link,
+            "published": getattr(
+                entry,
                 "published",
-                "Unknown"
-            ),
-            "url": entry.link
+                None
+            )
         })
 
     return news

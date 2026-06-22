@@ -1,17 +1,40 @@
-from crawlers.news_scraper import get_ai_news
+from crawlers.arxiv_scraper import get_recent_papers
+from crawlers.job_scraper import get_jobs
+from crawlers.news_scraper import get_news
 
-articles = get_ai_news()
+from exporters.csv_exporter import export_to_csv
+from exporters.jobs_exporter import export_jobs
+from exporters.news_exporter import export_news
 
-print(
-    f"\nFound {len(articles)} news articles\n"
+print("\nCollecting Research Papers...")
+papers = get_recent_papers(20)
+
+print("Collecting Jobs...")
+jobs = get_jobs()
+
+print("Collecting News...")
+news = get_news()
+
+# Export Papers
+export_to_csv(
+    papers,
+    "../output/research_papers.csv"
 )
 
-for article in articles:
+# Export Jobs
+export_jobs(
+    jobs,
+    "../output/jobs.csv"
+)
 
-    print("-" * 50)
+# Export News
+export_news(
+    news,
+    "../output/news.csv"
+)
 
-    print(article["title"])
+print("\nPipeline Completed Successfully!")
 
-    print(article["published"])
-
-    print(article["url"])
+print(f"Papers: {len(papers)}")
+print(f"Jobs: {len(jobs)}")
+print(f"News: {len(news)}")
