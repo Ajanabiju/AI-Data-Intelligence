@@ -1,0 +1,89 @@
+[
+    {
+        "schemaVersion": "1.0",
+        "recordType": "RESEARCH_PAPER",
+        "content": {
+            "title": "A Deep Reinforcement Learning Approach for Ramp Metering Based on Traffic Video Data",
+            "authors": [
+                "Bing Liu",
+                "Yu Tang",
+                "Yuxiong Ji",
+                "Yu Shen",
+                "Yuchuan Du"
+            ],
+            "paper_url": "https://arxiv.org/abs/2012.12104v1",
+            "github_url": "https://github.com/huggingface/transformers",
+            "github_stars": 161796,
+            "published_date": "2020-12-09T05:08:41Z"
+        }
+    },
+    {
+        "schemaVersion": "1.0",
+        "recordType": "RESEARCH_PAPER",
+        "content": {
+            "title": "Rethink AI-based Power Grid Control: Diving Into Algorithm Design",
+            "authors": [
+                "Xiren Zhou",
+                "Siqi Wang",
+                "Ruisheng Diao",
+                "Desong Bian",
+                "Jiahui Duan",
+                "Di Shi"
+            ],
+            "paper_url": "https://arxiv.org/abs/2012.13026v1",
+            "github_url": "https://github.com/huggingface/transformers",
+            "github_stars": 161796,
+            "published_date": "2020-12-23T23:38:41Z"
+        }
+    },
+    {
+        "schemaVersion": "1.0",
+        "recordType": "RESEARCH_PAPER",
+        "content": {
+            "title": "Fuzzy Commitments Offer Insufficient Protection to Biometric Templates Produced by Deep Learning",
+            "authors": [
+                "Danny Keller",
+                "Margarita Osadchy",
+                "Orr Dunkelman"
+            ],
+            "paper_url": "https://arxiv.org/abs/2012.13293v1",
+            "github_url": "https://github.com/huggingface/transformers",
+            "github_stars": 161796,
+            "published_date": "2020-12-24T15:28:33Z"
+        }
+    },
+    {
+        "schemaVersion": "1.0",
+        "recordType": "RESEARCH_PAPER",
+        "content": {
+            "title": "Generalization in portfolio-based algorithm selection",
+            "authors": [
+                "Maria-Florina Balcan",
+                "Tuomas Sandholm",
+                "Ellen Vitercik"
+            ],
+            "paper_url": "https://arxiv.org/abs/2012.13315v1",
+            "github_url": "https://github.com/huggingface/transformers",
+            "github_stars": 161796,
+            "published_date": "2020-12-24T16:33:17Z"
+        }
+    },
+    {
+        "schemaVersion": "1.0",
+        "recordType": "RESEARCH_PAPER",
+        "content": {
+            "title": "I like fish, especially dolphins: Addressing Contradictions in Dialogue Modeling",
+            "authors": [
+                "Yixin Nie",
+                "Mary Williamson",
+                "Mohit Bansal",
+                "Douwe Kiela",
+                "Jason Weston"
+            ],
+            "paper_url": "https://arxiv.org/abs/2012.13391v2",
+            "github_url": "https://github.com/huggingface/transformers",
+            "github_stars": 161796,
+            "published_date": "2020-12-24T18:47:49Z"
+        }
+    }
+]
