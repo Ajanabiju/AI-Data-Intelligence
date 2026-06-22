@@ -1,48 +1,40 @@
 import requests
-from bs4 import BeautifulSoup
 
-def get_startups(limit=20):
-
-    url = "https://www.ycombinator.com/companies"
-
-    response = requests.get(
-        url,
-        headers={
-            "User-Agent": "Mozilla/5.0"
-        }
-    )
-
-    soup = BeautifulSoup(
-        response.text,
-        "html.parser"
-    )
+def get_startups(limit=1000):
 
     startups = []
 
-    text = soup.get_text()
+    per_page = 100
 
-    words = text.split()
+    pages = limit // per_page
 
-    for word in words:
+    for page in range(1, pages + 1):
 
-        if len(word) > 3 and word[0].isupper():
+        url = (
+            "https://api.github.com/search/users"
+            f"?q=type:org&per_page={per_page}&page={page}"
+        )
+
+        response = requests.get(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "Mozilla/5.0"
+            }
+        )
+
+        data = response.json()
+
+        for org in data["items"]:
 
             startups.append({
-                "name": word,
-                "source": "Y Combinator",
-                "url": url
+                "name": org["login"],
+                "source": "GitHub Organizations",
+                "url": org["html_url"]
             })
 
-    unique = []
+        print(
+            f"Collected {len(startups)} startups..."
+        )
 
-    seen = set()
-
-    for startup in startups:
-
-        if startup["name"] not in seen:
-
-            seen.add(startup["name"])
-
-            unique.append(startup)
-
-    return unique[:limit]
+    return startups[:limit]

@@ -1,5 +1,13 @@
-from exporters.entity_mapping_exporter import export_entity_mapping
+from crawlers.startup_scraper import get_startups
+from exporters.startup_exporter import export_startups
 
-export_entity_mapping(
-    "../output/entity_mapping.csv"
+startups = get_startups(1000)
+
+export_startups(
+    startups,
+    "../output/startups.csv"
+)
+
+print(
+    f"\nCollected {len(startups)} startups"
 )
