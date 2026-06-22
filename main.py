@@ -1,11 +1,17 @@
-from crawlers.arxiv_scraper import get_recent_papers
-from exporters.csv_exporter import export_to_csv
+from crawlers.news_scraper import get_ai_news
 
-papers = get_recent_papers(20)
+articles = get_ai_news()
 
-export_to_csv(
-    papers,
-    "../output/research_papers.csv"
+print(
+    f"\nFound {len(articles)} news articles\n"
 )
 
-print("\nExport Complete!")
+for article in articles:
+
+    print("-" * 50)
+
+    print(article["title"])
+
+    print(article["published"])
+
+    print(article["url"])
