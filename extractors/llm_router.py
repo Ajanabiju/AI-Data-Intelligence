@@ -1,3 +1,6 @@
+import time
+import random
+
 MODEL_CHAIN = [
     "gemini",
     "groq",
@@ -14,22 +17,45 @@ def get_next_provider(current):
         return None
 
 
-def route_request():
+def call_provider(provider, text):
 
-    provider = "gemini"
+    if provider == "gemini":
+        return {"provider": "gemini"}
 
-    print(f"Trying {provider}")
+    if provider == "groq":
+        return {"provider": "groq"}
 
-    print("429 received")
+    if provider == "deepseek":
+        return {"provider": "deepseek"}
 
-    provider = get_next_provider(provider)
+    raise Exception("No provider")
 
-    print(f"Switching to {provider}")
 
-    print("413 received")
+def route_request(text):
 
-    provider = get_next_provider(provider)
+    provider = MODEL_CHAIN[0]
 
-    print(f"Switching to {provider}")
+    while provider:
 
-    print("Success")
+        try:
+
+            print(f"Trying {provider}")
+
+            result = call_provider(
+                provider,
+                text
+            )
+
+            return result
+
+        except Exception as e:
+
+            print(f"Error: {e}")
+
+            wait = random.uniform(1, 3)
+
+            time.sleep(wait)
+
+            provider = get_next_provider(provider)
+
+    return None

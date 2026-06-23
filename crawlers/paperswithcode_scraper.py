@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-def get_papers(limit=10):
+def get_papers(limit=20):
 
     url = "https://huggingface.co/papers/trending"
 
@@ -12,9 +12,25 @@ def get_papers(limit=10):
         }
     )
 
-    return [
-        {
-            "title": "Trending AI Papers Source Connected",
-            "url": url
-        }
-    ]
+    soup = BeautifulSoup(
+        response.text,
+        "html.parser"
+    )
+
+    papers = []
+
+    for link in soup.find_all("a", href=True):
+
+        href = link["href"]
+
+        if "/papers/" in href:
+
+            papers.append({
+                "title": link.get_text(strip=True),
+                "url": "https://huggingface.co" + href
+            })
+
+        if len(papers) >= limit:
+            break
+
+    return papers
