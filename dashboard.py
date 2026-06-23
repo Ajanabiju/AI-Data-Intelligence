@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
+import os
 
+# Page Config
 st.set_page_config(
     page_title="AI Data Intelligence Dashboard",
     layout="wide"
@@ -8,13 +10,27 @@ st.set_page_config(
 
 st.title("🚀 AI Data Intelligence Dashboard")
 
+# Paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+
+# Safe CSV Loader
+def load_csv(filename):
+    filepath = os.path.join(OUTPUT_DIR, filename)
+
+    if os.path.exists(filepath):
+        return pd.read_csv(filepath)
+    else:
+        st.warning(f"⚠️ {filename} not found")
+        return pd.DataFrame()
+
 # Load Data
-startups = pd.read_csv("../output/startups.csv")
-products = pd.read_csv("../output/products.csv")
-papers = pd.read_csv("../output/research_papers.csv")
-jobs = pd.read_csv("../output/jobs.csv")
-news = pd.read_csv("../output/news.csv")
-mapping = pd.read_csv("../output/entity_mapping.csv")
+startups = load_csv("startups.csv")
+products = load_csv("products.csv")
+papers = load_csv("research_papers.csv")
+jobs = load_csv("jobs.csv")
+news = load_csv("news.csv")
+mapping = load_csv("entity_mapping.csv")
 
 # Metrics
 col1, col2, col3, col4, col5 = st.columns(5)
@@ -70,4 +86,4 @@ with tab6:
     st.subheader("Entity Resolution Mapping")
     st.dataframe(mapping, use_container_width=True)
 
-st.success("Pipeline data loaded successfully ✅")
+st.success("✅ Pipeline data loaded successfully")
