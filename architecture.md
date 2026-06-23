@@ -2,58 +2,94 @@
 
 ## Overview
 
-This project implements a scalable Data Intelligence Pipeline for collecting, normalizing, enriching, and exporting data from multiple AI ecosystem sources.
+This project implements a scalable AI Data Intelligence Pipeline for collecting, processing, enriching, and visualizing intelligence data across multiple domains including startups, products, research papers, jobs, and news.
 
-The system currently ingests:
-
-* Research Papers (Arxiv)
-* AI Products (Hugging Face Models)
-* AI Jobs (WeWorkRemotely RSS)
-* AI News (TechCrunch AI Feed)
-
-The pipeline exports structured data into CSV and JSON formats for downstream analytics and reporting.
+The architecture is designed to support large-scale ingestion, entity resolution, LLM-powered extraction, and future horizontal scaling.
 
 ---
 
 # System Architecture
 
+```text
 Data Sources
-
-* Arxiv API
-* Hugging Face Models API
-* WeWorkRemotely RSS
-* TechCrunch AI RSS
-
-Data Flow
-
-Source Collection
-
-↓
-
-Data Cleaning
-
-↓
-
-Entity Resolution
-
-↓
-
-Schema Mapping
-
-↓
-
+│
+├── Startups
+├── Products
+├── Research Papers
+├── Jobs
+└── News
+│
+▼
+Crawler Layer
+│
+▼
+Extraction Layer
+│
+▼
+Entity Resolution Layer
+│
+▼
 Export Layer
-
-↓
-
-CSV / JSON Outputs
+│
+├── CSV
+├── JSON
+└── Google Sheets
+│
+▼
+Dashboard Layer
+```
 
 ---
 
-# Research Paper Pipeline
+# Phase I: Massive Data Acquisition
 
-Source:
-Arxiv API
+## Startup Collection
+
+Sources:
+
+* GitHub Organizations
+* AI Company Directories
+* Public Startup Directories
+
+Collected Fields:
+
+* Startup Name
+* Description
+* Source URL
+
+Target:
+
+* 1000+ Startup Records
+
+---
+
+## Product Collection
+
+Sources:
+
+* Hugging Face
+* AI Product Directories
+
+Collected Fields:
+
+* Product Name
+* Downloads
+* Likes
+* Source URL
+
+Target:
+
+* 1000+ Product Records
+
+---
+
+## Research Paper Collection
+
+Sources:
+
+* Arxiv
+* Papers With Code
+* GitHub
 
 Collected Fields:
 
@@ -61,69 +97,23 @@ Collected Fields:
 * Authors
 * Publication Date
 * Paper URL
+* GitHub URL
+* GitHub Stars
 
-Additional Enrichment:
+Target:
 
-* GitHub Repository Lookup
-* GitHub Stars Extraction
-
-Output:
-
-research_papers.csv
-
-research_papers.json
+* 1000+ Research Paper Records
 
 ---
 
-# Product Pipeline
+# Phase II: High-Fidelity Signal Ingestion
 
-Source:
-Hugging Face Models API
+## News Collection
 
-Collected Fields:
+Sources:
 
-* Product Name
-* Downloads
-* Likes
-
-Output:
-
-products.csv
-
-Scalability:
-
-Pagination support enables collection of thousands of product records.
-
----
-
-# Job Monitoring Pipeline
-
-Source:
-WeWorkRemotely RSS
-
-Collected Fields:
-
-* Company
-* Job Title
-* URL
-* Published Date
-* Remote Flag
-* Role Family
-
-Freshness Tracking:
-
-Jobs are filtered using publication timestamps to ensure only recent records are processed.
-
-Output:
-
-jobs.csv
-
----
-
-# News Monitoring Pipeline
-
-Source:
-TechCrunch AI Feed
+* AI News Sources
+* Technology News Websites
 
 Collected Fields:
 
@@ -131,206 +121,289 @@ Collected Fields:
 * URL
 * Published Date
 
-Freshness Strategy:
+Freshness Requirement:
 
-Publication timestamps are parsed and compared against current UTC time.
-
-Output:
-
-news.csv
+Only articles published within the last 24 hours should be retained.
 
 ---
 
-# Entity Resolution
+## Job Collection
 
-Purpose:
+Sources:
 
-Normalize multiple representations of the same organization.
+* AI Job Boards
+* Technology Career Portals
 
-Examples:
+Collected Fields:
 
-Open AI → OpenAI
+* Company
+* Job Title
+* Publication Date
+* Remote Eligibility
 
-OpenAI Inc. → OpenAI
+Freshness Requirement:
 
-Anthropic AI → Anthropic
+Only jobs published within the last 24 hours should be retained.
 
-DeepMind → Google DeepMind
+---
 
-Output:
+# LLM Extraction Architecture
 
-entity_mapping.csv
+The extraction layer is designed to support multiple providers.
+
+Provider Chain:
+
+1. Gemini Flash
+2. Groq Llama
+3. DeepSeek
+
+Workflow:
+
+```text
+Request
+│
+▼
+Gemini
+│
+├── Success → Return
+│
+└── Failure
+     │
+     ▼
+     Groq
+     │
+     ├── Success → Return
+     │
+     └── Failure
+          │
+          ▼
+          DeepSeek
+```
+
+Benefits:
+
+* High availability
+* Reduced downtime
+* Better fault tolerance
 
 ---
 
 # Handling 429 Rate Limits
 
-Strategy:
-
-* Retry mechanism
-* Exponential backoff
-* Random jitter
+The system implements exponential backoff with jitter.
 
 Example:
 
-Attempt 1
+Attempt 1 → 2 seconds
 
-↓
+Attempt 2 → 4 seconds
 
-429
+Attempt 3 → 8 seconds
 
-↓
+Attempt 4 → 16 seconds
 
-Wait 1 second
+Failed requests are retried automatically.
 
-↓
+Benefits:
 
-Retry
-
-↓
-
-Wait 2 seconds
-
-↓
-
-Retry
-
-This prevents service overload and improves reliability.
+* Prevents API abuse
+* Improves stability
+* Handles provider throttling gracefully
 
 ---
 
 # Handling 413 Payload Too Large
 
-Strategy:
+Large pages and documents are chunked before processing.
 
-* Intelligent chunking
-* Content truncation
-* Context size limits
+Chunk Size:
 
-Large documents are split into smaller payloads before being sent to LLM services.
-
-This prevents request failures caused by model context limits.
-
----
-
-# LLM Fallback Chain
-
-Primary:
-
-Gemini Flash
-
-Fallback 1:
-
-Groq Llama
-
-Fallback 2:
-
-DeepSeek
+10,000 characters
 
 Workflow:
 
-Gemini
+```text
+Large Document
+│
+▼
+Chunking
+│
+├── Chunk 1
+├── Chunk 2
+├── Chunk 3
+└── Chunk N
+│
+▼
+LLM Processing
+```
 
-↓
+Benefits:
 
-Failure
-
-↓
-
-Groq
-
-↓
-
-Failure
-
-↓
-
-DeepSeek
-
-↓
-
-Success
-
-This ensures high availability.
+* Avoids context overflow
+* Prevents payload rejection
+* Enables parallel processing
 
 ---
 
-# Scale Strategy (500,000+ Records)
+# Entity Resolution
 
-To scale beyond hundreds of thousands of records:
+The system performs canonical entity mapping.
 
-* Async Crawlers (asyncio)
-* Distributed Workers
-* Queue-Based Processing
-* Batch Exports
-* Parallel API Requests
+Example:
 
-No application code changes are required.
+```text
+OpenAI
+Open AI
+OpenAI Inc.
+```
 
-Only infrastructure scaling is needed.
+↓
+
+```text
+OpenAI
+```
+
+Benefits:
+
+* Deduplication
+* Clean analytics
+* Consistent graph relationships
+
+Entity mappings are exported to:
+
+entity_mapping.csv
 
 ---
 
 # Freshness Tracking
 
-Each record stores:
+The system maintains processed URL tracking.
 
-* Publication Timestamp
-* Collection Timestamp
+Workflow:
 
-Duplicate processing can be avoided using:
-
-* URL hashing
-* Timestamp comparison
-* Source-specific identifiers
-
----
-
-# Storage Strategy
-
-Structured Data:
-
-PostgreSQL
-
-Relationship Graph:
-
-Neo4j
-
-Vector Search:
-
-Qdrant
+```text
+New URL
+│
+▼
+Check Processed Store
+│
+├── Exists → Skip
+│
+└── New → Process
+```
 
 Benefits:
 
-* Fast querying
-* Relationship discovery
-* Semantic search capabilities
+* Prevents duplicate processing
+* Guarantees freshness
+* Reduces unnecessary API calls
 
 ---
 
-# Deliverables Generated
+# Scalability Strategy
 
-Current Outputs:
+Target Scale:
 
-* research_papers.csv
-* research_papers.json
-* products.csv
-* jobs.csv
-* news.csv
-* entity_mapping.csv
+500,000+ records
+
+Architecture:
+
+* Async Crawlers
+* Distributed Workers
+* Queue-Based Processing
+* Horizontal Scaling
+
+Infrastructure Components:
+
+* aiohttp
+* Playwright
+* PostgreSQL
+* Redis Queue
+* Object Storage
+
+Benefits:
+
+* No code changes required for scaling
+* Additional worker nodes can be added dynamically
+* Supports large-scale ingestion workloads
 
 ---
 
-# Future Enhancements
+# Anti-Bot Strategy
 
-* Startup Ingestion at Scale
-* Product-to-Company Linking
-* Advanced Deduplication
-* Distributed Crawling Infrastructure
-* Automated Google Sheets Export
+Protected websites require additional handling.
+
+Techniques:
+
+* Playwright Headless Browser
+* User-Agent Rotation
+* Session Persistence
+* Proxy Rotation
+* Request Throttling
+
+Benefits:
+
+* Reduced blocking
+* Improved crawl success rates
+* Better support for JavaScript-rendered websites
+
+---
+
+# Storage Architecture
+
+## Primary Database
+
+PostgreSQL
+
+Purpose:
+
+* Structured entity storage
+* Metadata storage
+* Query support
+
+## Graph Database
+
+Neo4j
+
+Purpose:
+
+* Startup relationships
+* Founder relationships
+* Product relationships
+
+## Vector Database
+
+Qdrant / Pinecone
+
+Purpose:
+
+* Semantic search
+* Embedding storage
+* Similarity retrieval
+
+---
+
+# Dashboard
+
+Technology:
+
+Streamlit
+
+Features:
+
+* Startup Metrics
+* Product Metrics
+* Research Paper Metrics
+* Job Metrics
+* News Metrics
+* Entity Mapping Viewer
+
+Purpose:
+
+Provide visual access to pipeline outputs and data quality validation.
 
 ---
 
 # Conclusion
 
-The system demonstrates a production-oriented Data Intelligence Pipeline with multi-source ingestion, structured schema generation, entity resolution, export functionality, retry handling, LLM fallback orchestration, and scalability planning for large-scale intelligence collection.
+The AI Data Intelligence Pipeline demonstrates scalable data acquisition, entity resolution, multi-provider extraction architecture, freshness tracking, and dashboard visualization. The system is designed to support future expansion to hundreds of thousands of records while maintaining reliability and data quality.
