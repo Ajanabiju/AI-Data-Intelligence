@@ -2,279 +2,220 @@
 
 ## Overview
 
-This project is a production-oriented Data Intelligence Pipeline designed to collect, normalize, enrich, and export structured intelligence data from multiple AI ecosystem sources.
+This project is a scalable AI Data Intelligence Pipeline built as part of the AI Engineer / Data Intelligence Trial Assignment.
 
-The system ingests:
+The pipeline collects, processes, enriches, and visualizes data across multiple AI ecosystem domains including:
 
-* AI Research Papers
-* AI Products
-* AI Jobs
-* AI News
+- AI Startups
+- AI Products
+- AI Research Papers
+- AI Jobs
+- AI News
+- Entity Resolution Mapping
 
-It also demonstrates:
-
-* Entity Resolution
-* Retry Logic for Rate Limits
-* Multi-LLM Fallback Routing
-* CSV/JSON Export Pipelines
-* GitHub Repository Enrichment
-
----
-
-## Architecture
-
-The pipeline follows a modular architecture:
-
-Data Sources
-
-↓
-
-Crawlers
-
-↓
-
-Data Cleaning
-
-↓
-
-Entity Resolution
-
-↓
-
-Schema Mapping
-
-↓
-
-Export Layer
-
-↓
-
-CSV / JSON Outputs
-
-Modules are separated into dedicated folders:
-
-* crawlers/
-* exporters/
-* extractors/
-* models/
-* resolvers/
-* utils/
+The system is designed with scalability, modularity, and production-readiness in mind.
 
 ---
 
 ## Features
 
-### Research Paper Ingestion
-
-Source:
-
-* Arxiv API
-
-Collected Fields:
-
-* Title
-* Authors
-* Publication Date
-* Paper URL
-
-Additional Enrichment:
-
-* GitHub Repository Lookup
-* GitHub Stars Extraction
-
-Output:
-
-* research_papers.csv
-* research_papers.json
-
----
+### Startup Ingestion
+- Collects 1000+ startup records
+- Source URL tracking
+- Structured CSV export
 
 ### Product Ingestion
+- Collects 1000+ AI product records
+- Startup-product relationship tracking
+- Structured CSV export
 
-Source:
-
-* Hugging Face Models API
-
-Collected Fields:
-
-* Product Name
-* Downloads
-* Likes
-
-Output:
-
-* products.csv
-
-Current Dataset Size:
-
-* 1000 Products
-
----
-
-### Job Monitoring
-
-Source:
-
-* WeWorkRemotely RSS
-
-Collected Fields:
-
-* Company
-* Job Title
-* Publication Date
-* Remote Status
-* URL
-
-Output:
-
-* jobs.csv
-
----
+### Research Paper Intelligence
+- Arxiv integration
+- PapersWithCode integration
+- GitHub repository extraction
+- GitHub star tracking
 
 ### News Monitoring
+- AI news collection
+- Freshness tracking
+- Recent publication filtering
 
-Source:
-
-* TechCrunch AI Feed
-
-Collected Fields:
-
-* Title
-* Publication Date
-* URL
-
-Output:
-
-* news.csv
-
----
+### Job Monitoring
+- AI job aggregation
+- Remote job detection
+- Company normalization
 
 ### Entity Resolution
+- Canonical entity mapping
+- Startup deduplication
+- Product deduplication
 
-Normalizes multiple representations of the same organization.
-
-Examples:
-
-| Raw Name     | Canonical Name  |
-| ------------ | --------------- |
-| Open AI      | OpenAI          |
-| OpenAI Inc.  | OpenAI          |
-| Anthropic AI | Anthropic       |
-| DeepMind     | Google DeepMind |
-| x ai         | xAI             |
-| Mistral      | Mistral AI      |
-
-Output:
-
-* entity_mapping.csv
+### Dashboard
+- Interactive Streamlit dashboard
+- Dataset visualization
+- Metrics overview
 
 ---
 
-### Retry Logic
+## Architecture Overview
 
-Implemented exponential backoff with jitter to handle:
+Pipeline Flow:
 
-* 429 Too Many Requests
-* Temporary API failures
-
-Example:
-
-Attempt 1
-
-↓
-
-429
-
-↓
-
-Retry after delay
-
-↓
-
-Success
-
----
-
-### LLM Fallback Routing
-
-The extraction layer supports multi-provider fallback routing.
-
-Priority Order:
-
-1. Gemini Flash
-2. Groq Llama
-3. DeepSeek
-
-Workflow:
-
-Gemini
-
-↓
-
-Failure
-
-↓
-
-Groq
-
-↓
-
-Failure
-
-↓
-
-DeepSeek
-
-↓
-
-Success
+```
+Sources
+│
+├── Startups
+├── Products
+├── Research Papers
+├── Jobs
+└── News
+│
+▼
+Data Collection Layer
+│
+▼
+Entity Resolution Layer
+│
+▼
+Export Layer
+│
+├── CSV
+├── JSON
+└── Google Sheets
+│
+▼
+Streamlit Dashboard
+```
 
 ---
 
 ## Project Structure
 
-```text
-src
-├── crawlers
-├── exporters
-├── extractors
-├── models
-├── resolvers
-├── utils
-├── README.md
+```
+AI-Data-Intelligence/
+│
+├── src/
+│   ├── crawlers/
+│   ├── extractors/
+│   ├── exporters/
+│   ├── resolvers/
+│   ├── models/
+│   └── utils/
+│
+├── output/
+│   ├── startups.csv
+│   ├── products.csv
+│   ├── research_papers.csv
+│   ├── jobs.csv
+│   ├── news.csv
+│   └── entity_mapping.csv
+│
+├── dashboard.py
+├── architecture.pdf
 ├── architecture.md
-├── .gitignore
-└── main.py
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## Output Files
+## Data Sources
 
-Generated Outputs:
+### Startups
+- GitHub Organizations
+- AI Company Directories
 
-```text
-output
-├── research_papers.csv
-├── research_papers.json
-├── products.csv
-├── jobs.csv
-├── news.csv
-└── entity_mapping.csv
+### Products
+- AI Product Directories
+- Public Product Listings
+
+### Research Papers
+- Arxiv
+- Papers With Code
+- GitHub
+
+### News
+- AI News Sources
+- Technology News Websites
+
+### Jobs
+- AI Job Boards
+- Technology Career Portals
+
+---
+
+## LLM Extraction Strategy
+
+Multi-provider fallback architecture:
+
+1. Gemini
+2. Groq
+3. DeepSeek
+
+Features:
+
+- Automatic provider switching
+- 429 retry handling
+- Exponential backoff
+- Fallback routing
+- Chunked processing
+
+---
+
+## Entity Resolution Strategy
+
+Examples:
+
 ```
+OpenAI
+Open AI
+OpenAI Inc.
+```
+
+↓
+
+```
+OpenAI
+```
+
+The resolver maintains canonical mappings and exports logs for auditability.
+
+---
+
+## Dashboard
+
+Launch dashboard:
+
+```bash
+streamlit run dashboard.py
+```
+
+Dashboard displays:
+
+- Startup count
+- Product count
+- Research paper count
+- Job count
+- News count
+- Entity mappings
 
 ---
 
 ## Installation
 
-Clone the repository:
+Clone repository:
 
 ```bash
 git clone https://github.com/Ajanabiju/AI-Data-Intelligence.git
+```
+
+Move into project:
+
+```bash
 cd AI-Data-Intelligence
 ```
 
-Create a virtual environment:
+Create virtual environment:
 
 ```bash
 python -m venv .venv
@@ -291,47 +232,50 @@ Windows:
 Install dependencies:
 
 ```bash
-pip install requests feedparser beautifulsoup4
+pip install -r requirements.txt
 ```
 
 ---
 
 ## Running the Pipeline
 
-Execute:
+Generate datasets:
 
 ```bash
-python main.py
+python src/main.py
 ```
 
-Outputs will be generated in the output directory.
+Launch dashboard:
+
+```bash
+streamlit run dashboard.py
+```
 
 ---
 
-## Scalability Strategy
+## Output Deliverables
 
-To support 500,000+ records:
+Generated files:
 
-* Async Crawlers
-* Distributed Workers
-* Queue-Based Processing
-* Batched Processing
-* Incremental Updates
-* URL Deduplication
-
-No application code changes are required for scaling.
+- startups.csv
+- products.csv
+- research_papers.csv
+- jobs.csv
+- news.csv
+- entity_mapping.csv
 
 ---
 
-## Future Improvements
+## Google Sheet Deliverable
 
-* Startup Ingestion (1000+ Records)
-* Product-to-Company Linking
-* Architecture PDF Generation
-* Distributed Crawling
-* Google Sheets Export
-* Vector Database Integration
-* Graph Database Integration
+Contains:
+
+- Startups
+- Products
+- Research Papers
+- Jobs
+- News
+- Entity Mapping
 
 ---
 
@@ -343,5 +287,12 @@ B.Tech Computer Science with Data Science
 
 SCMS School of Engineering and Technology
 
+Kerala, India
+
 GitHub:
 https://github.com/Ajanabiju
+
+LinkedIn:
+https://www.linkedin.com/in/ajana-biju-93ba7b291
+
+---
