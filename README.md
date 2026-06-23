@@ -2,67 +2,64 @@
 
 ## Overview
 
-This project is a scalable AI Data Intelligence Pipeline built as part of the AI Engineer / Data Intelligence Trial Assignment.
+This project was developed as part of the AI Engineer / Data Intelligence Trial Assignment.
 
-The pipeline collects, processes, enriches, and visualizes data across multiple AI ecosystem domains including:
-
-- AI Startups
-- AI Products
-- AI Research Papers
-- AI Jobs
-- AI News
-- Entity Resolution Mapping
-
-The system is designed with scalability, modularity, and production-readiness in mind.
+The system collects, processes, enriches, and exports intelligence data across multiple domains of the AI ecosystem, including startups, products, research papers, jobs, and news. The pipeline also includes entity resolution, GitHub metrics extraction, and dashboard-based visualization.
 
 ---
 
 ## Features
 
-### Startup Ingestion
-- Collects 1000+ startup records
-- Source URL tracking
-- Structured CSV export
+### Startup Intelligence
 
-### Product Ingestion
-- Collects 1000+ AI product records
-- Startup-product relationship tracking
-- Structured CSV export
+* Collects 1000+ startup records
+* Source tracking
+* Structured CSV export
+
+### Product Intelligence
+
+* Collects 1000+ product records
+* Product popularity metrics
+* Structured CSV export
 
 ### Research Paper Intelligence
-- Arxiv integration
-- PapersWithCode integration
-- GitHub repository extraction
-- GitHub star tracking
 
-### News Monitoring
-- AI news collection
-- Freshness tracking
-- Recent publication filtering
+* Arxiv integration
+* Papers With Code integration
+* GitHub repository extraction
+* GitHub stars tracking
+* Publication date extraction
 
-### Job Monitoring
-- AI job aggregation
-- Remote job detection
-- Company normalization
+### AI Jobs Monitoring
+
+* AI job aggregation
+* Remote job detection
+* Structured export
+
+### AI News Monitoring
+
+* News collection
+* Publication date tracking
+* Freshness filtering
 
 ### Entity Resolution
-- Canonical entity mapping
-- Startup deduplication
-- Product deduplication
+
+* Canonical startup mapping
+* Canonical product mapping
+* Entity deduplication
 
 ### Dashboard
-- Interactive Streamlit dashboard
-- Dataset visualization
-- Metrics overview
+
+* Streamlit-based dashboard
+* Dataset visualization
+* Metrics overview
 
 ---
 
-## Architecture Overview
+# Project Architecture
 
-Pipeline Flow:
-
-```
-Sources
+```text
+Data Sources
 │
 ├── Startups
 ├── Products
@@ -71,7 +68,10 @@ Sources
 └── News
 │
 ▼
-Data Collection Layer
+Crawler Layer
+│
+▼
+Extraction Layer
 │
 ▼
 Entity Resolution Layer
@@ -84,22 +84,22 @@ Export Layer
 └── Google Sheets
 │
 ▼
-Streamlit Dashboard
+Dashboard Layer
 ```
 
 ---
 
 ## Project Structure
 
-```
+```text
 AI-Data-Intelligence/
 │
 ├── src/
 │   ├── crawlers/
 │   ├── extractors/
 │   ├── exporters/
-│   ├── resolvers/
 │   ├── models/
+│   ├── resolvers/
 │   └── utils/
 │
 ├── output/
@@ -114,7 +114,7 @@ AI-Data-Intelligence/
 ├── architecture.pdf
 ├── architecture.md
 ├── README.md
-└── .gitignore
+└── requirements.txt
 ```
 
 ---
@@ -122,63 +122,76 @@ AI-Data-Intelligence/
 ## Data Sources
 
 ### Startups
-- GitHub Organizations
-- AI Company Directories
+
+* GitHub Organizations
+* AI Startup Directories
 
 ### Products
-- AI Product Directories
-- Public Product Listings
+
+* Hugging Face Models
+* AI Product Listings
 
 ### Research Papers
-- Arxiv
-- Papers With Code
-- GitHub
 
-### News
-- AI News Sources
-- Technology News Websites
+* Arxiv
+* Papers With Code
+* GitHub
 
 ### Jobs
-- AI Job Boards
-- Technology Career Portals
+
+* AI Job Boards
+* Technology Career Portals
+
+### News
+
+* AI News Sources
+* Technology News Sites
 
 ---
 
 ## LLM Extraction Strategy
 
-Multi-provider fallback architecture:
+The extraction engine supports multi-provider fallback.
 
-1. Gemini
-2. Groq
+Provider Chain:
+
+1. Gemini Flash
+2. Groq Llama
 3. DeepSeek
 
-Features:
+Benefits:
 
-- Automatic provider switching
-- 429 retry handling
-- Exponential backoff
-- Fallback routing
-- Chunked processing
+* High availability
+* Automatic failover
+* Reduced downtime
+* Improved extraction reliability
 
 ---
 
-## Entity Resolution Strategy
+## Production Readiness
 
-Examples:
+### Rate Limit Handling (429)
 
-```
-OpenAI
-Open AI
-OpenAI Inc.
-```
+* Exponential backoff
+* Retry queue
+* Provider fallback
 
-↓
+### Payload Handling (413)
 
-```
-OpenAI
-```
+* Intelligent chunking
+* Context window protection
 
-The resolver maintains canonical mappings and exports logs for auditability.
+### Scalability
+
+* Async crawling
+* Queue-based processing
+* Horizontal scaling
+
+### Entity Resolution
+
+* Canonical startup mapping
+* Canonical product mapping
+* Deduplication
 
 ---
 
@@ -190,14 +203,14 @@ Launch dashboard:
 streamlit run dashboard.py
 ```
 
-Dashboard displays:
+Dashboard includes:
 
-- Startup count
-- Product count
-- Research paper count
-- Job count
-- News count
-- Entity mappings
+* Startup metrics
+* Product metrics
+* Research paper metrics
+* Job metrics
+* News metrics
+* Entity mapping visualization
 
 ---
 
@@ -221,9 +234,7 @@ Create virtual environment:
 python -m venv .venv
 ```
 
-Activate environment:
-
-Windows:
+Activate environment (Windows):
 
 ```bash
 .venv\Scripts\activate
@@ -242,7 +253,7 @@ pip install -r requirements.txt
 Generate datasets:
 
 ```bash
-python src/main.py
+python main.py
 ```
 
 Launch dashboard:
@@ -253,35 +264,46 @@ streamlit run dashboard.py
 
 ---
 
-## Output Deliverables
+## Output Datasets
 
-Generated files:
+Generated outputs:
 
-- startups.csv
-- products.csv
-- research_papers.csv
-- jobs.csv
-- news.csv
-- entity_mapping.csv
+* startups.csv
+* products.csv
+* research_papers.csv
+* jobs.csv
+* news.csv
+* entity_mapping.csv
 
 ---
 
-## Google Sheet Deliverable
+## Deliverables
+
+### GitHub Repository
+
+Repository contains:
+
+* Source code
+* Dashboard
+* Documentation
+* Architecture design
+
+### Google Sheet
 
 Contains:
 
-- Startups
-- Products
-- Research Papers
-- Jobs
-- News
-- Entity Mapping
+* Startups
+* Products
+* Research Papers
+* Jobs
+* News
+* Entity Mapping
 
 ---
 
 ## Author
 
-Ajana Biju
+**Ajana Biju**
 
 B.Tech Computer Science with Data Science
 
@@ -294,5 +316,3 @@ https://github.com/Ajanabiju
 
 LinkedIn:
 https://www.linkedin.com/in/ajana-biju-93ba7b291
-
----
